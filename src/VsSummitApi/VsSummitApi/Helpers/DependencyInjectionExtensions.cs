@@ -35,7 +35,8 @@ public static class DependencyInjectionExtensions
             .WriteTo.File(fileName, outputTemplate: logTemplate)
             .CreateLogger();
 
-        logger.Information($"Log filename: {fileName} - Level: {Enum.GetValues(typeof(LogEventLevel)).Cast<LogEventLevel>().Where(logger.IsEnabled).Min()}");
+        logger.Information($"Log filename: {fileName} - Level:" +
+            $" {Enum.GetValues(typeof(LogEventLevel)).Cast<LogEventLevel>().Where(logger.IsEnabled).Min()}");
 
         builder.Host.UseSerilog(logger);
     }
