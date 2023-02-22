@@ -7,7 +7,7 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<MyConfiguration>(builder.Configuration.GetSection("Configuration"));
-
+builder.ConfigureLogging();
 builder.Services.AddDbContext<VsSummitApiContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("VsSummitApiContext") ?? throw new InvalidOperationException("Connection string 'VsSummitApiContext' not found.")));
 

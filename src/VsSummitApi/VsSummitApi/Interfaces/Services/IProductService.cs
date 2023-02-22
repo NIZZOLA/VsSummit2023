@@ -4,5 +4,5 @@ namespace VsSummitApi.Interfaces.Services;
 
 public interface IProductService
 {
-    public ICollection<ProductModel> GetAll();
+	public ICollection<ProductModel> GetAll();
 }
