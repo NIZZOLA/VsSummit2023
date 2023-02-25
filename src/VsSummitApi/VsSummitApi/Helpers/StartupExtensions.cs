@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
-using Serilog.Formatting.Json;
 using System.Reflection;
 using System.Threading.RateLimiting;
+using VsSummitApi.Data;
 
 namespace VsSummitApi.Helpers;
 public static class StartupExtensions
@@ -78,4 +79,19 @@ public static class StartupExtensions
                     }
               );
     }
+
+    public static void ConfigureDatabase(this IServiceCollection services, ConfigurationManager configuration)
+    {
+        services.AddDbContext<VsSummitApiContext>(options =>
+    options.UseSqlServer(configuration.GetConnectionString("VsSummitApiContext") ?? throw new InvalidOperationException("Connection string 'VsSummitApiContext' not found.")));
+    }
+
+    public static void ConfigureOutputCache(this IServiceCollection services)
+    {
+        services.AddOutputCache(options =>
+        {
+            options.DefaultExpirationTimeSpan = TimeSpan.FromSeconds(10);
+        });
+    }
+
 }
