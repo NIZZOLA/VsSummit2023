@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Options;
-using VsSummitApi.Data;
 using VsSummitApi.Interfaces.Services;
 
 namespace VsSummitApi;
@@ -8,7 +7,7 @@ public static class TestEndpoints
 {
     public static void MapTestEndpoints(this IEndpointRouteBuilder routes)
     {
-        var group = routes.MapGroup("/api/Test");
+        var group = routes.MapGroup("/api/Test").WithTags("Test");
 
         group.MapGet("/", async (IOptions<MyConfiguration> options) =>
         {
@@ -21,5 +20,45 @@ public static class TestEndpoints
             return service.GetAll();
         })
         .WithName("GetAll");
+
+        group.MapGet("/cachedefault", () =>
+        {
+            var response = "Resposta gerada em:" + DateTime.Now.ToString();
+            return response;
+        })
+        .CacheOutput()
+        .WithName("CacheDefault")
+        .WithOpenApi();
+
+        group.MapGet("/cachelong", (string param) =>
+        {
+            var response = "Resposta gerada em:" + DateTime.Now.ToString();
+            return response;
+        })
+        .CacheOutput(policy =>
+        {
+            policy.SetVaryByQuery("param");
+            policy.Expire(TimeSpan.FromSeconds(60));
+        })
+        .WithName("CacheLong")
+        .WithOpenApi();
+
+        group.MapGet("/ratelimited", () =>
+        {
+            var response = "Resposta gerada em:" + DateTime.Now.ToString();
+            return response;
+        })
+        .WithName("RateLimited")
+        .RequireRateLimiting("fixed")
+        .WithOpenApi();
+
+        group.MapGet("/rateperiodwith3queue", () =>
+        {
+            var response = "Resposta gerada em:" + DateTime.Now.ToString();
+            return response;
+        })
+        .WithName("RateLimitedTo3queue")
+        .RequireRateLimiting("period3")
+        .WithOpenApi();
     }
 }

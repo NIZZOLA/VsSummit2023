@@ -8,13 +8,13 @@ public static class ProductEndpoints
 {
     public static void MapProductModelEndpoints (this IEndpointRouteBuilder routes)
     {
-        var group = routes.MapGroup("/api/ProductModel");
+        var group = routes.MapGroup("/api/Product").WithTags("Product").RequireAuthorization("Administrator"); 
 
         group.MapGet("/", async (VsSummitApiContext db) =>
         {
             return await db.ProductModel.ToListAsync();
         })
-        .WithName("GetAllProductModels");
+        .WithName("GetAllProductModels").Produces<ICollection<ProductModel>>();
 
         group.MapGet("/{id}", async Task<Results<Ok<ProductModel>, NotFound>> (int id, VsSummitApiContext db) =>
         {
@@ -23,7 +23,7 @@ public static class ProductEndpoints
                     ? TypedResults.Ok(model)
                     : TypedResults.NotFound();
         })
-        .WithName("GetProductModelById");
+        .WithName("GetProductModelById").Produces<ProductModel>().Produces(StatusCodes.Status404NotFound);
 
         group.MapPut("/{id}", async Task<Results<NotFound, NoContent>> (int id, ProductModel productModel, VsSummitApiContext db) =>
         {
@@ -39,7 +39,7 @@ public static class ProductEndpoints
 
             return TypedResults.NoContent();
         })
-        .WithName("UpdateProductModel");
+        .WithName("UpdateProductModel").Produces(StatusCodes.Status204NoContent).Produces(StatusCodes.Status404NotFound);
 
         group.MapPost("/", async (ProductModel productModel, VsSummitApiContext db) =>
         {
@@ -47,7 +47,7 @@ public static class ProductEndpoints
             await db.SaveChangesAsync();
             return TypedResults.Created($"/api/ProductModel/{productModel.Id}",productModel);
         })
-        .WithName("CreateProductModel");
+        .WithName("CreateProductModel").Produces<ProductModel>(StatusCodes.Status201Created);
 
         group.MapDelete("/{id}", async Task<Results<Ok<ProductModel>, NotFound>> (int id, VsSummitApiContext db) =>
         {
@@ -60,6 +60,6 @@ public static class ProductEndpoints
 
             return TypedResults.NotFound();
         })
-        .WithName("DeleteProductModel");
+        .WithName("DeleteProductModel").Produces(StatusCodes.Status404NotFound).Produces<ProductModel>(StatusCodes.Status200OK);
     }
 }
