@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using VsSummitApi.Interfaces.Services;
 
-namespace VsSummitApi;
+namespace VsSummitApi.Endpoints;
 
 public static class TestEndpoints
 {

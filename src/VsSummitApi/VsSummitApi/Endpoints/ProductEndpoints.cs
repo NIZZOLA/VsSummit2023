@@ -2,13 +2,14 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using VsSummitApi.Data;
 using VsSummitApi.Models;
-namespace VsSummitApi;
+
+namespace VsSummitApi.Endpoints;
 
 public static class ProductEndpoints
 {
-    public static void MapProductModelEndpoints (this IEndpointRouteBuilder routes)
+    public static void MapProductModelEndpoints(this IEndpointRouteBuilder routes)
     {
-        var group = routes.MapGroup("/api/Product").WithTags("Product").RequireAuthorization("Administrator"); 
+        var group = routes.MapGroup("/api/Product").WithTags("Product").RequireAuthorization("Administrator");
 
         group.MapGet("/", async (VsSummitApiContext db) =>
         {
@@ -33,7 +34,7 @@ public static class ProductEndpoints
             {
                 return TypedResults.NotFound();
             }
-            
+
             db.Update(productModel);
             await db.SaveChangesAsync();
 
@@ -45,7 +46,7 @@ public static class ProductEndpoints
         {
             db.ProductModel.Add(productModel);
             await db.SaveChangesAsync();
-            return TypedResults.Created($"/api/ProductModel/{productModel.Id}",productModel);
+            return TypedResults.Created($"/api/ProductModel/{productModel.Id}", productModel);
         })
         .WithName("CreateProductModel").Produces<ProductModel>(StatusCodes.Status201Created);
 

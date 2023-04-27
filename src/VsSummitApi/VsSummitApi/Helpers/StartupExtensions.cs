@@ -9,6 +9,14 @@ using VsSummitApi.Data;
 namespace VsSummitApi.Helpers;
 public static class StartupExtensions
 {
+    public static void AddStartupConfig(this IServiceCollection services, ConfigurationManager configuration)
+    {
+        services.AddHealthChecks();
+        services.ConfigureDatabase(configuration);
+        services.ConfigureOutputCache();
+        services.AddLimiterRules();
+        services.ScanDependencyInjection(Assembly.GetExecutingAssembly(), "Service");
+    }
     public static void ScanDependencyInjection(this IServiceCollection services, Assembly projectAssembly,
         string classesEndWith)
     {

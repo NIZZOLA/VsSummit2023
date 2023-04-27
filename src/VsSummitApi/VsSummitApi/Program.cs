@@ -1,16 +1,12 @@
 using VsSummitApi;
 using VsSummitApi.Helpers;
-using System.Reflection;
+using VsSummitApi.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<MyConfiguration>(builder.Configuration.GetSection("Configuration"));
 builder.ConfigureLogging();
-builder.Services.AddHealthChecks();
-builder.Services.ConfigureDatabase(builder.Configuration);
-builder.Services.ConfigureOutputCache();
-builder.Services.AddLimiterRules();
-builder.Services.ScanDependencyInjection(Assembly.GetExecutingAssembly(), "Service");
+builder.Services.AddStartupConfig(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -27,8 +23,7 @@ app.UseHttpsRedirection();
 app.UseOutputCache();
 app.UseRateLimiter();
 
-app.MapProductModelEndpoints();
-app.MapTestEndpoints();
+app.AddEndpoints();
 app.UseHealthChecks("/health");
 
 app.Run();
